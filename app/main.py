@@ -1,14 +1,10 @@
 from fastapi import FastAPI
-from app.database import engine
-from sqlalchemy import text
+
+
+from app.routers import auth
 
 app = FastAPI()
+app.include_router(auth.router)
 @app.get("/")
 async def root():
     return {"message": "Hello World"}
-
-@app.get("/test_db")
-async def get_db():
-    with engine.connect() as connection:
-        connection.execute(text("SELECT 1"))
-    return {"message": "Database Connected"}
