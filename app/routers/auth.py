@@ -1,23 +1,31 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 
 from app.core.security import hash_password
 from app.database import SessionLocal
-from app.schemas import UserCreate
+from app.schemas import UserCreate, UserResponse
 from app.models import User
 
 router = APIRouter()
 
-@router.post("/register")
+@router.post("/register", response_model=UserResponse)
 def register(user: UserCreate):
-    db=SessionLocal()
+    db = SessionLocal()
 
-    hashed_password = hash_password(user.password)
+    try:
 
+        existing_user = db.query(User).filter(User.email == user.email).first()
+        if existing_user:
+            raise HTTPException(status_code=409, detail="Email already registered")
 
-    new_user = User(
-        email=user.email,
-        password_hash=hashed_password)
-    db.add(new_user)
-    db.commit()
-    db.refresh(new_user)
-    return {"message": "User registered"}
+        hashed_password = hash_password(user.password)
+
+        new_user = User(
+            email=user.email,
+            password_hash=hashed_password)
+        db.add(new_user)
+        db.commit()
+        db.refresh(new_user)
+        return {"id": new_user.id,
+                "email": new_user.email}
+    finally:
+        db.close()
