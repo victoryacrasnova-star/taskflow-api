@@ -1,8 +1,9 @@
 from fastapi import APIRouter, HTTPException
+from jose import jwt
 
-from app.core.security import hash_password, verify_password
+from app.core.security import hash_password, verify_password, create_access_token, decode_access_token
 from app.database import SessionLocal
-from app.schemas import UserCreate, UserResponse, UserLogin
+from app.schemas import UserCreate, UserResponse, UserLogin, Token
 from app.models import User
 
 router = APIRouter()
@@ -30,17 +31,38 @@ def register(user: UserCreate):
     finally:
         db.close()
 
-@router.post("/login")
+@router.post("/login", response_model=Token)
 def login(user: UserLogin):
     db = SessionLocal()
     try:
         existing_user = db.query(User).filter(User.email == user.email).first()
         if existing_user is None:
-            raise HTTPException(status_code=401, detail="Email or password not correct")
-        if verify_password(user.password, existing_user.password_hash) is False:
-            raise HTTPException(status_code=401, detail="Email or password not correct")
-        else:
-            return {"message": "Login successful"}
+            raise HTTPException(status_code=401, detail="Invalid email or password")
 
+        if verify_password(user.password, existing_user.password_hash) is False:
+            raise HTTPException(status_code=401, detail="Invalid email or password")
+
+        access_token = create_access_token(existing_user.email)
+        return {
+            "access_token": access_token,
+            "token_type": "bearer"
+            }
     finally:
         db.close()
+
+"""@router.post("/logout", response_model=UserResponse)
+def protected_endpoint(user: Token):
+    db = SessionLocal()
+    try:
+        Authorization = decode_access_token(access_token)
+        access_token = Authorization["sub"]
+        if access_token is None:
+            raise HTTPException(status_code=401, detail="Invalid token")
+        return {
+            "id": Authorization["id"],
+            "email": Authorization["email"]
+        }
+
+    finally:
+        db.close()"""
+
