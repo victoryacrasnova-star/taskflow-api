@@ -19,13 +19,13 @@ def create_access_token(email: str) -> str:
         algorithm=ALGORITHM
     )
 
-"""def decode_access_token(token: str) -> str:
-    payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-
-    return {
-        "email": payload["sub"],
-        "exp": datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    }"""
+def decode_access_token(token: str) -> str:
+    payload = jwt.decode(
+        token,
+        SECRET_KEY,
+        algorithms=[ALGORITHM]
+    )
+    return payload["sub"]
 
 password_hash = PasswordHash.recommended()
 

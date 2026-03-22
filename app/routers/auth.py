@@ -1,10 +1,14 @@
 from fastapi import APIRouter, HTTPException
-from jose import jwt
+
 
 from app.core.security import hash_password, verify_password, create_access_token, decode_access_token
 from app.database import SessionLocal
-from app.schemas import UserCreate, UserResponse, UserLogin, Token
+from app.schemas import UserCreate, UserResponse, UserLogin, Token, TokenData
 from app.models import User
+from fastapi import Request, Depends
+from fastapi.security import OAuth2PasswordBearer
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login")
 
 router = APIRouter()
 
@@ -50,19 +54,15 @@ def login(user: UserLogin):
     finally:
         db.close()
 
-"""@router.post("/logout", response_model=UserResponse)
-def protected_endpoint(user: Token):
+@router.get("/me", response_model=UserResponse)
+def me(token = Depends(oauth2_scheme)):
     db = SessionLocal()
     try:
-        Authorization = decode_access_token(access_token)
-        access_token = Authorization["sub"]
-        if access_token is None:
+
+        email = decode_access_token(token)
+        user = db.query(User).filter(User.email == email).first()
+        if user is None:
             raise HTTPException(status_code=401, detail="Invalid token")
-        return {
-            "id": Authorization["id"],
-            "email": Authorization["email"]
-        }
-
+        return user
     finally:
-        db.close()"""
-
+        db.close()
