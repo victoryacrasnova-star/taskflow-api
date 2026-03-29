@@ -36,3 +36,7 @@ class ProjectRead(BaseModel):
     owner_id: int
 
     model_config = ConfigDict(from_attributes=True)
+
+class ProjectUpdate(BaseModel):
+    name: str
+    description: str
