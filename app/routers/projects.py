@@ -2,9 +2,10 @@ from typing import List
 
 from fastapi import APIRouter, Depends, HTTPException
 
+from app.routers.auth import get_current_user
 from app.schemas import ProjectCreate, ProjectRead, ProjectUpdate
-from app.models import Project
-from app.database import SessionLocal, get_db
+from app.models import Project, User
+from app.database import get_db
 from sqlalchemy.orm import Session
 
 router = APIRouter()
@@ -12,10 +13,10 @@ router = APIRouter()
 
 
 @router.post("/projects/", response_model=ProjectRead)
-def create_project(payload: ProjectCreate, db: Session = Depends(get_db())):
+def create_project(payload: ProjectCreate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
 
     new_project = Project(
-        owner_id=1, #временно, пока нет get_current_user
+        owner_id=current_user.id,
         name=payload.name,
         description=payload.description)
 

@@ -2,10 +2,10 @@ from fastapi import APIRouter, HTTPException
 from sqlalchemy.orm import Session
 
 from app.core.security import hash_password, verify_password, create_access_token, decode_access_token
-from app.database import SessionLocal, get_db
-from app.schemas import UserCreate, UserResponse, UserLogin, Token, TokenData
+from app.database import get_db
+from app.schemas import UserCreate, UserResponse, UserLogin, Token
 from app.models import User
-from fastapi import Request, Depends
+from fastapi import Depends
 from fastapi.security import OAuth2PasswordBearer
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login")
@@ -44,10 +44,15 @@ def login(user: UserLogin, db: Session = Depends(get_db)):
         "token_type": "bearer"
         }
 
-@router.get("/me", response_model=UserResponse)
-def me(token = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+def get_current_user(token = Depends(oauth2_scheme), db: Session = Depends(get_db)):
     email = decode_access_token(token)
+    if email is None:
+        raise HTTPException(status_code=401, detail="Invalid token")
     user = db.query(User).filter(User.email == email).first()
     if user is None:
-        raise HTTPException(status_code=401, detail="Invalid token")
+        raise HTTPException(status_code=401, detail="User not found")
     return user
+
+@router.get("/me", response_model=UserResponse)
+def me(current_user: User = Depends(get_current_user)):
+    return current_user
