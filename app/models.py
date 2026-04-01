@@ -14,6 +14,18 @@ class Project(Base):
     __tablename__ = "projects"
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String, unique=True, index=True)
-    description = Column(String, index=True, nullable=False)
+    description = Column(String, nullable=False)
     owner_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     owner = relationship("User", back_populates="projects")
+
+    tasks = relationship("Task", back_populates="project")
+
+class Task(Base):
+    __tablename__ = "tasks"
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    title = Column(String, nullable=False)
+    description = Column(String)
+    status = Column(String, default="new")
+
+    project_id = Column(Integer, ForeignKey("projects.id"), nullable=False)
+    project = relationship("Project", back_populates="tasks")
