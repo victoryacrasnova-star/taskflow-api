@@ -23,7 +23,7 @@ class Token(BaseModel):
 class TokenData(BaseModel):
     access_token: str
 
-"""База CRUD"""
+"""Project CRUD"""
 
 class ProjectCreate(BaseModel):
     name: str

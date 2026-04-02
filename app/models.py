@@ -8,12 +8,15 @@ class User(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     email = Column(String, unique=True, index=True, nullable=False)
     password_hash = Column(String, nullable=False)
+
     projects = relationship("Project", back_populates="owner")
+
+    tasks = relationship("Task", back_populates="assignee")
 
 class Project(Base):
     __tablename__ = "projects"
     id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String, unique=True, index=True)
+    name = Column(String, index=True, nullable=False)
     description = Column(String, nullable=False)
     owner_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     owner = relationship("User", back_populates="projects")
@@ -29,3 +32,6 @@ class Task(Base):
 
     project_id = Column(Integer, ForeignKey("projects.id"), nullable=False)
     project = relationship("Project", back_populates="tasks")
+
+    assignee_id = Column(Integer, ForeignKey("users.id"), nullable=True)
+    assignee = relationship("User", back_populates="tasks")
