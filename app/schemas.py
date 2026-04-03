@@ -1,4 +1,5 @@
 from pydantic import BaseModel, ConfigDict
+from typing import Optional
 
 """USER"""
 
@@ -14,7 +15,7 @@ class UserLogin(BaseModel):
     email: str
     password: str
 
-"""База TOKEN"""
+"""TOKEN"""
 
 class Token(BaseModel):
     access_token: str
@@ -40,3 +41,34 @@ class ProjectRead(BaseModel):
 class ProjectUpdate(BaseModel):
     name: str
     description: str
+
+"""Task CRUD""" #доработать, добавить опциональность
+
+class TaskCreate(BaseModel):
+    description: str
+    title: str
+    assignee_id: int = None
+
+class TaskRead(BaseModel):
+    id: int
+    status: str
+    description: str
+    title: str
+    project_id: int
+    assignee_id: int = None
+
+    model_config = ConfigDict(from_attributes=True)
+
+class TaskUpdate(BaseModel):
+    optional: bool
+    status: str
+    description: str
+    title: str
+    project_id: int
+
+"""Task Status CRUD"""
+
+class TaskStatus(BaseModel): #доработать, добавить опциональность
+    new: bool
+    in_progress: bool
+    done: bool
