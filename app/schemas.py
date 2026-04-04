@@ -1,5 +1,7 @@
+from anyio.abc import TaskStatus
 from pydantic import BaseModel, ConfigDict
 from typing import Optional
+from enum import Enum
 
 """USER"""
 
@@ -45,30 +47,34 @@ class ProjectUpdate(BaseModel):
 """Task CRUD""" #доработать, добавить опциональность
 
 class TaskCreate(BaseModel):
-    description: str
     title: str
-    assignee_id: int = None
+
+    description: Optional[str] = None
+    assignee_id: Optional[int] = None
 
 class TaskRead(BaseModel):
     id: int
     status: str
-    description: str
     title: str
     project_id: int
-    assignee_id: int = None
+
+    description: Optional[str] = None
+    assignee_id: Optional[int] = None
 
     model_config = ConfigDict(from_attributes=True)
 
 class TaskUpdate(BaseModel):
-    optional: bool
-    status: str
-    description: str
-    title: str
-    project_id: int
+    description: Optional[str] = None
+    title: Optional[str] = None
+    assignee_id: Optional[int] = None
+
 
 """Task Status CRUD"""
 
-class TaskStatus(BaseModel): #доработать, добавить опциональность
-    new: bool
-    in_progress: bool
-    done: bool
+class TaskStatusEnum(str, Enum):
+    new = "new"
+    in_progress = "in_progress"
+    done = "done"
+
+class TaskStatusUpdate(BaseModel): #доработать, добавить опциональность
+    status: TaskStatusEnum
