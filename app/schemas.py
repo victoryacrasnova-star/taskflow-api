@@ -63,18 +63,13 @@ class TaskRead(BaseModel):
 
     model_config = ConfigDict(from_attributes=True)
 
-class TaskUpdate(BaseModel):
-    description: Optional[str] = None
-    title: Optional[str] = None
-    assignee_id: Optional[int] = None
-
-
-"""Task Status CRUD"""
-
 class TaskStatusEnum(str, Enum):
     new = "new"
     in_progress = "in_progress"
     done = "done"
 
-class TaskStatusUpdate(BaseModel): #доработать, добавить опциональность
-    status: TaskStatusEnum
+class TaskUpdate(BaseModel):
+    description: Optional[str] = None
+    title: Optional[str] = None
+    assignee_id: Optional[int] = None
+    status: Optional[TaskStatusEnum] = None
