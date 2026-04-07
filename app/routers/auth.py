@@ -6,7 +6,7 @@ from app.database import get_db
 from app.schemas import UserCreate, UserResponse, UserLogin, Token
 from app.models import User
 from fastapi import Depends
-from fastapi.security import OAuth2PasswordBearer
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login")
 
@@ -30,12 +30,12 @@ def register(user: UserCreate, db: Session = Depends(get_db)):
             "email": new_user.email}
 
 @router.post("/login", response_model=Token)
-def login(user: UserLogin, db: Session = Depends(get_db)):
-    existing_user = db.query(User).filter(User.email == user.email).first()
+def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
+    existing_user = db.query(User).filter(User.email == form_data.username).first()
     if existing_user is None:
         raise HTTPException(status_code=401, detail="Invalid email or password")
 
-    if verify_password(user.password, existing_user.password_hash) is False:
+    if verify_password(form_data.password, existing_user.password_hash) is False:
         raise HTTPException(status_code=401, detail="Invalid email or password")
 
     access_token = create_access_token(existing_user.email)
