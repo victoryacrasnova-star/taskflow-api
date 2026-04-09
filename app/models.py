@@ -1,7 +1,7 @@
-from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
 from app.database import Base
-
+from datetime import datetime
 
 class User(Base):
     __tablename__ = "users"
@@ -12,6 +12,8 @@ class User(Base):
     projects = relationship("Project", back_populates="owner")
 
     tasks = relationship("Task", back_populates="assignee")
+
+    comments = relationship("Comment", back_populates="author")
 
 class Project(Base):
     __tablename__ = "projects"
@@ -35,3 +37,20 @@ class Task(Base):
 
     assignee_id = Column(Integer, ForeignKey("users.id"), nullable=True)
     assignee = relationship("User", back_populates="tasks")
+
+    comments = relationship("Comment", back_populates="task")
+
+class Comment(Base):
+    __tablename__ = "comments"
+    id = Column(Integer, primary_key=True, autoincrement=True)
+
+    task_id = Column(Integer, ForeignKey("tasks.id"), nullable=False)
+    task = relationship("Task", back_populates="comments")
+
+    author_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    author = relationship("User", back_populates="comments")
+
+    content = Column(String, nullable=False)
+
+    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+    reply_to_comment_id = Column(Integer, ForeignKey("comments.id"), nullable=True)
