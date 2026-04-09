@@ -1,7 +1,7 @@
-from anyio.abc import TaskStatus
 from pydantic import BaseModel, ConfigDict
 from typing import Optional
 from enum import Enum
+from datetime import datetime
 
 """USER"""
 
@@ -44,7 +44,7 @@ class ProjectUpdate(BaseModel):
     name: str
     description: str
 
-"""Task CRUD""" #доработать, добавить опциональность
+"""Task CRUD"""
 
 class TaskCreate(BaseModel):
     title: str
@@ -73,3 +73,23 @@ class TaskUpdate(BaseModel):
     title: Optional[str] = None
     assignee_id: Optional[int] = None
     status: Optional[TaskStatusEnum] = None
+
+"""CRUD Comments"""
+
+class CommentCreate(BaseModel):
+    content: str
+    reply_to_comment_id: Optional[int] = None
+
+class CommentRead(BaseModel):
+    id: int
+    content: str
+    task_id: int
+    author_id: int
+
+    reply_to_comment_id: Optional[int] = None
+    created_at: datetime
+
+    model_config = ConfigDict(from_attributes=True)
+
+class CommentUpdate(BaseModel):
+    content: Optional[str] = None
