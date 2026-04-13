@@ -10,8 +10,6 @@ from sqlalchemy.orm import Session
 
 router = APIRouter()
 
-
-
 @router.post("/projects/", response_model=ProjectRead)
 def create_project(payload: ProjectCreate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
 

@@ -6,15 +6,21 @@ from app.database import get_db
 from sqlalchemy.orm import Session
 from typing import List
 
+from app.models import User
 
 router = APIRouter()
 
 @router.post("/projects/{project_id}/tasks", response_model=TaskRead)
-async def create_task(project_id:int, payload: TaskCreate, db: Session = Depends(get_db)):
+async def create_task(project_id: int, payload: TaskCreate, db: Session = Depends(get_db)):
 
     project = db.query(Project).filter(Project.id == project_id).first()
     if not project:
         raise HTTPException(status_code=404, detail="Project not found")
+
+    if payload.assignee_id is not None:
+        assignee = db.query(User).filter(User.id == payload.assignee_id).first()
+        if not assignee:
+            raise HTTPException(status_code=400, detail="Assign not found")
 
     new_task = Task(
         assignee_id=payload.assignee_id,
