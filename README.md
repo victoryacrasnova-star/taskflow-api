@@ -10,7 +10,8 @@ It allows users to create projects, tasks, and discussions.
 - User registration and authentication  
 - Create and update projects  
 - Create, update and delete tasks  
-- Discussions inside tasks  
+- Discussions inside tasks
+- Create, update and delete comment  
 
 ## How to run?
 
@@ -38,7 +39,8 @@ http://127.0.0.1:8000/docs
 
 - Регистрация и авторизация пользователей  
 - Создание и обновление проектов  
-- Создание, обновление и удаление задач  
+- Создание, обновление и удаление задач
+- Создание, обновление и удаление комментариев  
 
 ## Как запустить?
 
