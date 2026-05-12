@@ -40,6 +40,7 @@ async def create_task(project_id: int, payload: TaskCreate, db: Session = Depend
 async def get_tasks(
         project_id: int,
         status: Optional[str] = None,
+        assignee_id: Optional[int] = None,
         db: Session = Depends(get_db)):
 
     project = db.query(Project).filter(Project.id == project_id).first()
@@ -49,6 +50,9 @@ async def get_tasks(
     tasks = db.query(Task).filter(Task.project_id == project_id)
     if status is not None:
         tasks = tasks.filter(Task.status == status)
+
+    if assignee_id is not None:
+        tasks = tasks.filter(Task.assignee_id == assignee_id)
 
     tasks = tasks.all()
     return tasks
