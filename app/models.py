@@ -31,6 +31,7 @@ class Task(Base):
     title = Column(String, nullable=False)
     description = Column(String)
     status = Column(String, default="new")
+    priority = Column(Integer, default=0)
 
     project_id = Column(Integer, ForeignKey("projects.id"), nullable=False)
     project = relationship("Project", back_populates="tasks")

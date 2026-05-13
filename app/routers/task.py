@@ -41,6 +41,7 @@ async def get_tasks(
         project_id: int,
         status: Optional[str] = None,
         assignee_id: Optional[int] = None,
+        priority: Optional[int] = None,
         db: Session = Depends(get_db)):
 
     project = db.query(Project).filter(Project.id == project_id).first()
@@ -53,6 +54,9 @@ async def get_tasks(
 
     if assignee_id is not None:
         tasks = tasks.filter(Task.assignee_id == assignee_id)
+
+    if priority is not None:
+        tasks = tasks.filter(Task.priority == priority)
 
     tasks = tasks.all()
     return tasks
