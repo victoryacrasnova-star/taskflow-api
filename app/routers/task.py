@@ -95,6 +95,9 @@ async def update_task(project_id:  int, task_id: int, payload: TaskUpdate, db: S
     if payload.assignee_id is not None:
         updated_task.assignee_id = payload.assignee_id
 
+    if payload.priority is not None:
+        updated_task.priority = payload.priority
+
     db.commit()
     db.refresh(updated_task)
     return updated_task
