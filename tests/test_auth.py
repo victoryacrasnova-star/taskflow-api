@@ -17,11 +17,22 @@ def test_register():
     assert response.status_code == 200
 
 def test_login():
-    response = client.post(
+    email = f"test_{uuid4()}@test.com"
+    response_register = client.post(
+       "/register",
+       json={"email": email,
+             "password": "123456",}
+   )
+    assert response_register.status_code == 200
+
+    response_login = client.post(
         "/login",
-        data={
-            "username": "test@test.com",
-            "password": "123456",
-        }
+        data={"username": email,
+              "password": "123456"}
     )
-    assert response.status_code == 200
+    assert response_login.status_code == 200
+
+    data = response_login.json()
+
+    assert "access_token" in data
+    assert data["token_type"] == "bearer"
