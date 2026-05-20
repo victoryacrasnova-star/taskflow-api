@@ -41,7 +41,7 @@ def test_create_project_with_token():
     assert "access_token" in data
     assert data["token_type"] == "bearer"
 
-    token = login_response.json()["access_token"]
+    token = data["access_token"]
 
     project_response = client.post(
         "/projects",
@@ -52,3 +52,9 @@ def test_create_project_with_token():
         headers={"Authorization": f"Bearer {token}"}
     )
     assert project_response.status_code == 200
+
+    project_data = project_response.json()
+
+    assert project_data["name"] == "Test Project"
+    assert project_data["description"] == "Test description"
+    assert "owner_id" in project_data
