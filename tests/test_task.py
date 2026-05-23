@@ -1,67 +1,75 @@
 from uuid import uuid4
 from fastapi.testclient import TestClient
-from sqlalchemy.sql.functions import current_user
 
 from app.main import app
 
 client = TestClient(app)
 
+"""
+1. Авторизация
+2. Логин
+3. Создание проекта
+4. Создание задачи
+"""
+
 def test_create_task():
-    email = f"test{uuid4()}@test.com"
-    password = "123456"
+    email = f'test{uuid4()}@test.com'
+    password = '123456'
 
     register_response = client.post(
-        "/register",
+        '/register',
         json={
-            "email": email,
-            "password": password,
+            'email': email,
+            'password': password,
         }
     )
 
     assert register_response.status_code == 200
 
     login_response = client.post(
-        "/login",
+        '/login',
         data={
-            "username": email,
-            "password": password,
+            'username': email,
+            'password': password,
         }
     )
 
     assert login_response.status_code == 200
 
-    token = login_response.json()["access_token"]
+    token = login_response.json()['access_token']
 
     project_response = client.post(
-        "/projects",
+        '/projects',
         json={
-            "name": "Test Project",
-            "description": "Test Project",
+            'name': "Test Project",
+            'description': "Test Description",
         },
-        headers={
-            "Authorization": f"Bearer {token}",
+        headers = {
+            'Authorization': f'Bearer {token}',
         }
     )
-
     assert project_response.status_code == 200
 
     project_data = project_response.json()
-    project_id = project_data["id"]
-    tasks_response = client.post(
-        f"/projects/{project_id}/tasks",
+    project_id = project_data['id']
+
+    task_response = client.post(
+        f'/projects/{project_id}/tasks',
         json={
             "title": "Test Task",
-            "description": "Test Task",
-            "assignee_id": None,
-            "priority": 0,
+            "description": "Test Description",
+            "assignee_id":  None,
+            "priority": 0
+        },
+        headers = {
+            'Authorization': f'Bearer {token}',
         }
     )
+    assert task_response.status_code == 200
 
-    assert tasks_response.status_code == 200
+    task_data = task_response.json()
 
-    tasks_data = tasks_response.json()
-
-    assert tasks_data["title"] == "Test Task"
-    assert tasks_data["description"] == "Test Task"
-    assert tasks_data["project_id"] == project_id
-    assert tasks_data["status"] == "new"
+    assert task_data['title'] == "Test Task"
+    assert task_data['description'] == "Test Description"
+    assert task_data['status'] == "new"
+    assert task_data['project_id'] == project_id
