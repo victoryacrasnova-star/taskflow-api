@@ -13,6 +13,22 @@ It allows users to create projects, tasks, and discussions.
 - Discussions inside tasks
 - Create, update and delete comment  
 
+## Tests
+
+The project includes pytest tests for the main API flows:
+
+- user registration
+- user login
+- protected endpoints
+- project creation
+- task creation
+
+Run tests:
+
+```bash
+pytest
+```
+
 ## How to run?
 
 1. Clone the repository  
@@ -41,6 +57,22 @@ http://127.0.0.1:8000/docs
 - Создание и обновление проектов  
 - Создание, обновление и удаление задач
 - Создание, обновление и удаление комментариев  
+
+## Тесты
+
+В проекте есть pytest-тесты для основных сценариев API:
+
+- регистрация пользователя
+- логин пользователя
+- защищенные endpoints
+- создание проекта
+- создание задачи
+
+Запуск тестов:
+
+```bash
+pytest
+```
 
 ## Как запустить?
 
