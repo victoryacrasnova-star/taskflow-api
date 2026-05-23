@@ -4,7 +4,7 @@ from app.schemas import TaskCreate, TaskRead, TaskUpdate
 from fastapi import APIRouter, Depends, HTTPException
 from app.database import get_db
 from sqlalchemy.orm import Session
-from typing import List
+from typing import List, Optional
 
 from app.models import User
 
@@ -37,13 +37,28 @@ async def create_task(project_id: int, payload: TaskCreate, db: Session = Depend
     return new_task
 
 @router.get("/projects/{project_id}/tasks", response_model=List[TaskRead])
-async def get_tasks(project_id: int, db: Session = Depends(get_db)):
+async def get_tasks(
+        project_id: int,
+        status: Optional[str] = None,
+        assignee_id: Optional[int] = None,
+        priority: Optional[int] = None,
+        db: Session = Depends(get_db)):
 
     project = db.query(Project).filter(Project.id == project_id).first()
     if not project:
         raise HTTPException(status_code=404, detail="Project not found")
-    tasks = db.query(Task).filter(Task.project_id == project_id).all()
 
+    tasks = db.query(Task).filter(Task.project_id == project_id)
+    if status is not None:
+        tasks = tasks.filter(Task.status == status)
+
+    if assignee_id is not None:
+        tasks = tasks.filter(Task.assignee_id == assignee_id)
+
+    if priority is not None:
+        tasks = tasks.filter(Task.priority == priority)
+
+    tasks = tasks.all()
     return tasks
 
 @router.get("/projects/{project_id}/tasks/{task_id}", response_model=TaskRead)
@@ -79,6 +94,9 @@ async def update_task(project_id:  int, task_id: int, payload: TaskUpdate, db: S
 
     if payload.assignee_id is not None:
         updated_task.assignee_id = payload.assignee_id
+
+    if payload.priority is not None:
+        updated_task.priority = payload.priority
 
     db.commit()
     db.refresh(updated_task)

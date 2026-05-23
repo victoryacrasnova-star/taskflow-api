@@ -60,6 +60,7 @@ class TaskRead(BaseModel):
 
     description: Optional[str] = None
     assignee_id: Optional[int] = None
+    priority: Optional[int] = None
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -73,6 +74,7 @@ class TaskUpdate(BaseModel):
     title: Optional[str] = None
     assignee_id: Optional[int] = None
     status: Optional[TaskStatusEnum] = None
+    priority: Optional[int] = None
 
 """CRUD Comments"""
 
