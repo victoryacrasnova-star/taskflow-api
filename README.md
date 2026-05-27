@@ -5,13 +5,28 @@
 This is a backend project for managing the development process.  
 It allows users to create projects, tasks, and discussions.
 
+## Tech Stack
+
+- Python
+- FastAPI
+- PostgreSQL
+- SQLAlchemy
+- Alembic
+- JWT Authentication
+- Pytest
+- Docker
+- Docker Compose
+
 ## Features
 
-- User registration and authentication  
-- Create and update projects  
-- Create, update and delete tasks  
-- Discussions inside tasks
-- Create, update and delete comment  
+- User registration and JWT authentication
+- Protected endpoints
+- Project CRUD
+- Task CRUD
+- Task filtering
+- Task discussions/comments
+- Pytest API tests
+- Docker support
 
 ## Tests
 
@@ -29,17 +44,18 @@ Run tests:
 pytest
 ```
 
-## How to run?
+## Run with Docker
 
-1. Clone the repository  
-2. Install dependencies  
-3. Configure the database connection (using .env)  
-4. Run the server:
+Build and start containers:
 
-uvicorn app.main:app --reload
+```bash
+docker compose up --build
+```
 
-5. Open Swagger:
-http://127.0.0.1:8000/docs
+Open SWAGGER:
+```bash
+http://localhost:8000/docs
+```
 
 # TaskFlow API
 
@@ -50,6 +66,18 @@ http://127.0.0.1:8000/docs
 
 Проект находится в активной разработке.  
 Функциональность постепенно расширяется.
+
+## Стек технологий
+
+- Python
+- FastAPI
+- PostgreSQL
+- SQLAlchemy
+- Alembic
+- JWT-аутентификация
+- Pytest
+- Docker
+- Docker Compose
 
 ## Что умеет?
 
@@ -74,14 +102,19 @@ http://127.0.0.1:8000/docs
 pytest
 ```
 
-## Как запустить?
 
-1. Склонировать репозиторий  
-2. Установить зависимости  
-3. Настроить подключение к базе данных (через .env)  
-4. Запустить сервер:
+---
 
-uvicorn app.main:app --reload
+## Запуск:
 
-5. Открыть Swagger:
-http://127.0.0.1:8000/docs
+## Запуск через Docker
+
+Собрать и запустить контейнеры:
+
+```bash
+docker compose up --build
+```
+Открыть SWAGGER:
+```bash
+http://localhost:8000/docs
+```
